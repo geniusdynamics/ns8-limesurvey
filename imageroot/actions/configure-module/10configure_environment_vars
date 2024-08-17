@@ -14,20 +14,31 @@ import agent
 data = json.load(sys.stdin)
 
 #This is specific to you module, so you need to change it accordingly.
-# we read a json stdin {"vars1":true, "var2":"foo", "vars3": 3} and we writ it to .config/state/environment
-# Upper case to set environment variable and minor case to read from stdin
+# ADMIN_USER	Initial LimeSurvey Admin User
+# ADMIN_NAME	Initial LimeSurvey Admin Username
+# ADMIN_EMAIL	Initial LimeSurvey Admin Email
+# ADMIN_PASSWORD	Initial LimeSurvey Admin Password
+# PUBLIC_URL	Public URL for public scripts
+# BASE_URL	Application Base URL
 
-# this values must exists in the json stdin
-# agent.set_env("MAIL_SERVER", data["mail_server"])
-# agent.set_env("LDAP_DOMAIN", data["ldap_domain"])
+host = data.get('host')
 
-# you can add default values for the following variables
-# agent.set_env("MAIL_DOMAIN",data.get("mail_domain",""))
-# agent.set_env("WOWORKERSCOUNT",data.get("workers_count",3))
-# agent.set_env("AUXILIARYACCOUNT",data.get("auxiliary_account",True))
-# agent.set_env("ACTIVESYNC",data.get("activesync",False))
+ADMIN_USER = data.get('ADMIN_USER', 'admin')
+ADMIN_NAME = data.get('ADMIN_NAME', 'Admin')
+ADMIN_EMAIL = data.get('ADMIN_EMAIL', 'admin@admin.com')
+ADMIN_PASSWORD = data.get('ADMIN_PASSWORD', 'password')
+PUBLIC_URL = 'https://'+host
+BASE_URL = 'https://'+host
 
+limesurvey_env = {
+    'ADMIN_USER': ADMIN_USER,
+    'ADMIN_NAME': ADMIN_NAME,
+    'ADMIN_EMAIL': ADMIN_EMAIL,
+    'ADMIN_PASSWORD': ADMIN_PASSWORD,
+    'PUBLIC_URL': PUBLIC_URL,
+    'BASE_URL': BASE_URL
+}
 
-# Make sure everything is saved inside the environment file
-# just before starting systemd unit
+agent.write_envfile("limesurvey.env", limesurvey_env)
+
 #agent.dump_env()

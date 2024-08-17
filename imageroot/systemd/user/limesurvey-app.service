@@ -23,6 +23,7 @@ ExecStart=/usr/bin/podman run --conmon-pidfile %t/limesurvey-app.pid \
     --pod-id-file %t/limesurvey.pod-id --replace -d --name  limesurvey-app \
     --volume limesurvey-app:/var/www/html/upload/surveys/:Z \
     --env-file=%S/state/limesurvey-db.env \
+    --env-file=%S/state/limesurvey.env \
     ${LIMESURVEY_IMAGE}
 ExecStop=/usr/bin/podman stop --ignore --cidfile %t/limesurvey-app.ctr-id -t 10
 ExecReload=/usr/bin/podman kill -s HUP limesurvey-app
