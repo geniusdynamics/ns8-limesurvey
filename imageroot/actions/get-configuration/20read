@@ -17,6 +17,21 @@ import agent
 # Prepare return variable
 config = {}
 
+if os.path.exists("limesurvey.env"):
+    data = agent.read_envfile("limesurvey.env")
+    config["ADMIN_USER"] = data["ADMIN_USER"]
+    config["ADMIN_NAME"] = data["ADMIN_NAME"]
+    config["ADMIN_EMAIL"] = data["ADMIN_EMAIL"]
+    config["ADMIN_PASSWORD"] = data["ADMIN_PASSWORD"]
+    config["PUBLIC_URL"] = data["PUBLIC_URL"]
+    config["BASE_URL"] = data["BASE_URL"]
+else:
+    config["ADMIN_USER"] = ""
+    config["ADMIN_NAME"] = ""
+    config["ADMIN_EMAIL"] = ""
+    config["ADMIN_PASSWORD"] = ""
+    config["PUBLIC_URL"] = ""
+    config["BASE_URL"] = ""
 # Read current configuration from the environment file
 config["host"] = os.getenv("TRAEFIK_HOST","")
 config["http2https"] = os.getenv("TRAEFIK_HTTP2HTTPS") == "True"
