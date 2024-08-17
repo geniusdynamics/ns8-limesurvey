@@ -61,6 +61,48 @@
                 $t("settings.enabled")
               }}</template>
             </cv-toggle>
+            <cv-text-input
+                :label="$t('ADMIN USER')"
+                placeholder="Test"
+                v-model="ADMIN_USER"
+                class="mg-bottom"
+                :invalid-message="$t(error.ADMIN_USER)"
+                :disabled="loading.getConfiguration || loading.configureModule"
+                ref="ADMIN_USER"
+            >
+            </cv-text-input>
+            <cv-text-input
+                :label="$t('ADMIN NAME')"
+                placeholder="Test Test "
+                v-model="ADMIN_NAME"
+                class="mg-bottom"
+                :invalid-message="$t(error.ADMIN_NAME)"
+                :disabled="loading.getConfiguration || loading.configureModule"
+                ref="ADMIN_NAME"
+            >
+            </cv-text-input>
+            <cv-text-input
+                :label="$t('ADMIN EMAIL')"
+                placeholder="admin@admin.com"
+                v-model="ADMIN_EMAIL"
+                class="mg-bottom"
+                :invalid-message="$t(error.ADMIN_EMAIL)"
+                :disabled="loading.getConfiguration || loading.configureModule"
+                ref="ADMIN_EMAIL"
+                type="email"
+            >
+            </cv-text-input>
+            <cv-text-input
+                :label="$t('ADMIN PASSWORD')"
+                placeholder="***********"
+                v-model="ADMIN_PASSWORD"
+                class="mg-bottom"
+                :invalid-message="$t(error.ADMIN_PASSWORD)"
+                :disabled="loading.getConfiguration || loading.configureModule"
+                ref="ADMIN_PASSWORD"
+                type="password"
+            >
+            </cv-text-input>
               <!-- advanced options -->
             <cv-accordion ref="accordion" class="maxwidth mg-bottom">
               <cv-accordion-item :open="toggleAccordion[0]">
@@ -125,6 +167,10 @@ export default {
       host: "",
       isLetsEncryptEnabled: false,
       isHttpToHttpsEnabled: true,
+      ADMIN_USER: "",
+      ADMIN_NAME: "",
+      ADMIN_EMAIL: "",
+      ADMIN_PASSWORD: "",
       loading: {
         getConfiguration: false,
         configureModule: false,
@@ -135,6 +181,10 @@ export default {
         host: "",
         lets_encrypt: "",
         http2https: "",
+        ADMIN_USER: "",
+        ADMIN_NAME: "",
+        ADMIN_EMAIL: "",
+        ADMIN_PASSWORD: "",
       },
     };
   },
@@ -202,6 +252,10 @@ export default {
       this.host = config.host;
       this.isLetsEncryptEnabled = config.lets_encrypt;
       this.isHttpToHttpsEnabled = config.http2https;
+      this.ADMIN_USER = config.ADMIN_USER;
+      this.ADMIN_NAME = config.ADMIN_NAME;
+      this.ADMIN_EMAIL = config.ADMIN_EMAIL;
+      this.ADMIN_PASSWORD = config.ADMIN_PASSWORD;
 
       this.loading.getConfiguration = false;
       this.focusElement("host");
@@ -271,6 +325,10 @@ export default {
             host: this.host,
             lets_encrypt: this.isLetsEncryptEnabled,
             http2https: this.isHttpToHttpsEnabled,
+            ADMIN_USER: this.ADMIN_USER,
+            ADMIN_NAME: this.ADMIN_NAME,
+            ADMIN_EMAIL: this.ADMIN_EMAIL,
+            ADMIN_PASSWORD: this.ADMIN_PASSWORD,
           },
           extra: {
             title: this.$t("settings.instance_configuration", {
