@@ -1,19 +1,19 @@
 {
   "name": "limesurvey",
   "description": {
-    "en": "My limesurvey module"
+    "en": "LimeSurvey is the simple, quick and anonymous online survey tool that's bursting with juicy insights. Calling students, professionals and enterprises: design a survey and get the best insights, it’s free and as easy as squeezing a lime. Make a free online survey now!"
   },
-  "categories": [],
+  "categories": ["surveys"],
   "authors": [
     {
-      "name": "Name Surname",
-      "email": "author@yourmail.org"
+      "name": "Kemboi Elvis",
+      "email": "kemboi@genius.ke"
     }
   ],
   "docs": {
-    "documentation_url": "https://docs.limesurvey.com/",
-    "bug_url": "https://github.com/NethServer/dev",
-    "code_url": "https://github.com/author/ns8-limesurvey"
+    "documentation_url": "https://www.limesurvey.org/",
+    "bug_url": "https://github.com/geniusdynamics/dev",
+    "code_url": "https://github.com/geniusdynamics/ns8-limesurvey"
   },
-  "source": "ghcr.io/nethserver/limesurvey"
+  "source": "ghcr.io/geniusdynamics/limesurvey"
 }
