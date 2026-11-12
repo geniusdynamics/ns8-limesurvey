@@ -10,20 +10,18 @@ After=limesurvey.service mariadb-app.service
 
 [Service]
 Environment=PODMAN_SYSTEMD_UNIT=%n
-EnvironmentFile=%S/state/environment
-EnvironmentFile=-%S/state/smarthost.env
-WorkingDirectory=%S/state
+EnvironmentFile=%E/state/environment
+WorkingDirectory=%E/state
 Restart=always
 TimeoutStopSec=70
 ExecStartPre=/bin/mkdir -p tmp
 ExecStartPre=/bin/rm -f %t/limesurvey-app.pid %t/limesurvey-app.ctr-id
-ExecStartPre=-runagent discover-smarthost
 ExecStart=/usr/bin/podman run --conmon-pidfile %t/limesurvey-app.pid \
     --cidfile %t/limesurvey-app.ctr-id --cgroups=no-conmon \
     --pod-id-file %t/limesurvey.pod-id --replace -d --name  limesurvey-app \
     --volume limesurvey-app:/var/www/html/upload/surveys/:Z \
-    --env-file=%S/state/limesurvey-db.env \
-    --env-file=%S/state/limesurvey.env \
+    --env-file=%E/state/limesurvey-db.env \
+    --env-file=%E/state/limesurvey.env \
     ${LIMESURVEY_IMAGE}
 ExecStop=/usr/bin/podman stop --ignore --cidfile %t/limesurvey-app.ctr-id -t 10
 ExecReload=/usr/bin/podman kill -s HUP limesurvey-app
