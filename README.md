@@ -1,151 +1,115 @@
 # ns8-limesurvey
 
-This is a template module for [NethServer 8](https://github.com/NethServer/ns8-core).
-To start a new module from it:
+LimeSurvey is the simple, quick and anonymous online survey tool that's bursting with juicy insights. Calling students, professionals and enterprises: design a survey and get the best insights, it’s free and as easy as squeezing a lime. Make a free online survey now!
 
+Module id: `limesurvey`. Images are pinned in `build-images.sh` and updated through reviewed changes.
 
 ## Install
 
-Instantiate the module with:
+```bash
+add-module ghcr.io/geniusdynamics/limesurvey:latest 1
+```
 
-    add-module ghcr.io/geniusdynamics/limesurvey:latest 1
-
-The output of the command will return the instance name.
-Output example:
-
-    {"module_id": "limesurvey1", "image_name": "limesurvey", "image_url": "ghcr.io/geniusdynamics/limesurvey:latest"}
+The command returns the instance id, for example `limesurvey1`. Use the id NS8 returns.
 
 ## Configure
 
-Let's assume that the mattermost instance is named `limesurvey1`.
-
-Launch `configure-module`, by setting the following parameters:
-- `host`: a fully qualified domain name for the application
-- `http2https`: enable or disable HTTP to HTTPS redirection (true/false)
-- `lets_encrypt`: enable or disable Let's Encrypt certificate (true/false)
-
-
-Example:
-
-```
-api-cli run configure-module --agent module/limesurvey1 --data - <<EOF
+```bash
+api-cli run configure-module --agent module/limesurvey1 --data - <<'EOF'
 {
-  "host": "limesurvey.domain.com",
+  "host": "limesurvey.example.org",
   "http2https": true,
   "lets_encrypt": false
 }
 EOF
 ```
 
-The above command will:
-- start and configure the limesurvey instance
-- configure a virtual host for trafik to access the instance
+| Parameter | Required | Type | Description |
+|---|---|---|---|
+| `host` | yes | string | Host name for the application, like 'limesurvey.domain.org' |
+| `lets_encrypt` | yes | boolean | Request a valid Let's Encrypt certificate. |
+| `http2https` | yes | boolean | Redirect all the HTTP requests to HTTPS |
+
+## Configuration output
+
+`get-configuration` returns: `host`, `lets_encrypt`, `http2https`.
+
+## Images
+
+| Image | Version |
+|---|---|
+| `docker.io/mariadb` | `13.0.2` |
+| `docker.io/martialblog/limesurvey` | `7.9.1-261102-apache` |
+
+## Network and access
+
+- Reserves 1 TCP port(s) on the node. The web application is published through Traefik on the configured host name.
+- Runs rootless.
+- Declares these NS8 authorizations: `traefik@node:routeadm`.
+
+## Backup
+
+The following paths are included in the NS8 backup (`imageroot/etc/state-include.conf`):
+
+- `state/limesurvey.sql`
+- `state/database.env`
+- `state/limesurvey-db.env`
+- `state/limesurvey.env`
+- `volumes/limesurvey-app`
+
+## Services
+
+- `limesurvey-app.service`
+- `limesurvey.service`
+- `mariadb-app.service`
 
 ## Get the configuration
-You can retrieve the configuration with
 
-```
+```bash
 api-cli run get-configuration --agent module/limesurvey1
 ```
 
-## Uninstall
+## Update and uninstall
 
-To uninstall the instance:
-
-    remove-module --no-preserve limesurvey1
-
-## Update
-
-```shell
+```bash
 api-cli run update-module --data '{"module_url":"ghcr.io/geniusdynamics/limesurvey:latest","instances":["limesurvey1"],"force":true}'
-```
-## Smarthost setting discovery
-
-Some configuration settings, like the smarthost setup, are not part of the
-`configure-module` action input: they are discovered by looking at some
-Redis keys.  To ensure the module is always up-to-date with the
-centralized [smarthost
-setup](https://geniusdynamics.github.io/ns8-core/core/smarthost/) every time
-limesurvey starts, the command `bin/discover-smarthost` runs and refreshes
-the `state/smarthost.env` file with fresh values from Redis.
-
-Furthermore if smarthost setup is changed when limesurvey is already
-running, the event handler `events/smarthost-changed/10reload_services`
-restarts the main module service.
-
-See also the `systemd/user/limesurvey.service` file.
-
-This setting discovery is just an example to understand how the module is
-expected to work: it can be rewritten or discarded completely.
-
-## Debug
-
-some CLI are needed to debug
-
-- The module runs under an agent that initiate a lot of environment variables (in /home/limesurvey1/.config/state), it could be nice to verify them
-on the root terminal
-
-    `runagent -m limesurvey1 env`
-
-- you can become runagent for testing scripts and initiate all environment variables
-  
-    `runagent -m limesurvey1`
-
- the path become : 
-```
-    echo $PATH
-    /home/limesurvey1/.config/bin:/usr/local/agent/pyenv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/usr/
+remove-module --no-preserve limesurvey1
 ```
 
-- if you want to debug a container or see environment inside
- `runagent -m limesurvey1`
- ```
-podman ps
-CONTAINER ID  IMAGE                                      COMMAND               CREATED        STATUS        PORTS                    NAMES
-d292c6ff28e9  localhost/podman-pause:4.6.1-1702418000                          9 minutes ago  Up 9 minutes  127.0.0.1:20015->80/tcp  80b8de25945f-infra
-d8df02bf6f4a  docker.io/library/mariadb:10.11.5          --character-set-s...  9 minutes ago  Up 9 minutes  127.0.0.1:20015->80/tcp  mariadb-app
-9e58e5bd676f  docker.io/library/nginx:stable-alpine3.17  nginx -g daemon o...  9 minutes ago  Up 9 minutes  127.0.0.1:20015->80/tcp  limesurvey-app
-```
-
-you can see what environment variable is inside the container
-```
-podman exec  limesurvey-app env
-PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-TERM=xterm
-PKG_RELEASE=1
-MARIADB_DB_HOST=127.0.0.1
-MARIADB_DB_NAME=limesurvey
-MARIADB_IMAGE=docker.io/mariadb:10.11.5
-MARIADB_DB_TYPE=mysql
-container=podman
-NGINX_VERSION=1.24.0
-NJS_VERSION=0.7.12
-MARIADB_DB_USER=limesurvey
-MARIADB_DB_PASSWORD=limesurvey
-MARIADB_DB_PORT=3306
-HOME=/root
-```
-
-you can run a shell inside the container
-
-```
-podman exec -ti   limesurvey-app sh
-/ # 
-```
 ## Testing
 
-Test the module using the `test-module.sh` script:
+Continuous integration:
 
+- `Publish images` builds the module image on every push.
+- `Test module` installs the image on a QEMU NS8 node and runs the Robot Framework suite in `tests/`. It runs after `Publish images` succeeds on `dev` and on `main`.
+- `Build API JSON Schema docs` and the security scan run alongside.
 
-    ./test-module.sh <NODE_ADDR> ghcr.io/geniusdynamics/limesurvey:latest
+The suite installs the module, configures a host name, checks that the web application answers through Traefik, takes UI screenshots and removes the module.
 
-The tests are made using [Robot Framework](https://robotframework.org/)
+Run it locally with the NS8 standard infrastructure described in the [ns8-github-actions README](https://github.com/NethServer/ns8-github-actions/blob/v1/README.md#running-tests-locally).
 
-## UI translation
+## Open items
 
-Translated with [Weblate](https://hosted.weblate.org/projects/ns8/).
+Found by the NS8 module standards check. These must be resolved before a stable release:
 
-To setup the translation process:
+- tests/limesurvey.robot generated from template: set real configure payload and URL check
+- mariadb-app.service: uses %S/state, kickstart uses %E/state
+- limesurvey.service: uses %S/state, kickstart uses %E/state
+- limesurvey-app.service: uses %S/state, kickstart uses %E/state
+- discover-smarthost still present: remove if the app does not use SMTP
+- README still has the template boilerplate
+- mariadb-app.service: %S/state changed to %E/state (review the bind mounts that remain)
+- limesurvey.service: %S/state changed to %E/state (review the bind mounts that remain)
+- limesurvey-app.service: %S/state changed to %E/state (review the bind mounts that remain)
+- imageroot/actions/restore-module/80start_services: smarthost lines removed, check the unit still starts
+- imageroot/actions/configure-module/80start_services: smarthost lines removed, check the unit still starts
+- imageroot/systemd/user/limesurvey-app.service: smarthost lines removed, check the unit still starts
+- LIMESURVEY_IMAGE is used by the module but no image in the label provides it: leftover from the template?
 
-- add [GitHub Weblate app](https://docs.weblate.org/en/latest/admin/continuous.html#github-setup) to your repository
-- add your repository to [hosted.weblate.org]((https://hosted.weblate.org) or ask a NethServer developer to add it to ns8 Weblate project
+## Upstream
+
+Application documentation: https://www.limesurvey.org/
+
+## License
+
+GPL-3.0-or-later. See [LICENSE](LICENSE).
