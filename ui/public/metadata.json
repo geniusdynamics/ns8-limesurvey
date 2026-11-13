@@ -1,10 +1,11 @@
 {
   "name": "limesurvey",
   "description": {
-    "en": "LimeSurvey is the simple, quick and anonymous online survey tool that's bursting with juicy insights. Calling students, professionals and enterprises: design a survey and get the best insights, it’s free and as easy as squeezing a lime. Make a free online survey now!"
+    "en": "LimeSurvey is the simple, quick and anonymous online survey tool that's bursting with juicy insights. Calling students, professionals and enterprises: design a survey and get the best insights, it’s free and as easy as squeezing a lime. Make a free online survey now!",
+    "it": "LimeSurvey è uno strumento per sondaggi online semplice, rapido e anonimo."
   },
   "categories": [
-    "surveys"
+    "office"
   ],
   "authors": [
     {
