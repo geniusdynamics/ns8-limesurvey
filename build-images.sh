@@ -49,6 +49,7 @@ buildah config --entrypoint=/ \
     --label="org.nethserver.authorizations=traefik@node:routeadm" \
     --label="org.nethserver.tcp-ports-demand=1" \
     --label="org.nethserver.rootfull=0" \
+    --label="org.nethserver.min-core=3.0.0" \
     --label="org.nethserver.images=docker.io/mariadb:13.0.2 docker.io/martialblog/limesurvey:7.9.1-261102-apache" \
     "${container}"
 # Commit the image
